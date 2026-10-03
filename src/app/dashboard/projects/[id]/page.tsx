@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Persona, Project } from "@/lib/types";
 import { BrandGuidelinesForm } from "./brand-guidelines-form";
 import { PersonasSection } from "./personas-section";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { getNextProjectStep, projectFlowHref } from "@/lib/flow/project-state";
 
 export default async function ProjectDetailPage(
   props: PageProps<"/dashboard/projects/[id]">,
@@ -32,6 +35,9 @@ export default async function ProjectDetailPage(
         {project.description && (
           <p className="text-muted-foreground">{project.description}</p>
         )}
+        <Button className="mt-4" render={<Link href={projectFlowHref(project.id, getNextProjectStep(project))} />}>
+          {getNextProjectStep(project) === "brand-guidelines" ? "Start copy flow" : "Resume copy flow"}
+        </Button>
       </div>
 
       <Card>

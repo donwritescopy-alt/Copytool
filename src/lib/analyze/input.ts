@@ -9,6 +9,11 @@ export type AnalyzeInput = {
   brandName: string;
   targetAudience: string;
   narrativeStance: NarrativeStance;
+  voice: string;
+  tone: string;
+  dos: string;
+  donts: string;
+  terminology: string;
   channel: Channel;
   primaryGoal: string;
   /** Optional: may be an empty string. */
@@ -56,8 +61,13 @@ export function parseAnalyzeInput(body: unknown): ParseResult {
   const primaryGoal = readText("primaryGoal", { required: true, max: MAX_FIELD_LENGTH });
   const constraints = readText("constraints", { required: false, max: MAX_FIELD_LENGTH });
   const currentCopy = readText("currentCopy", { required: true, max: MAX_COPY_LENGTH });
+  const voice = readText("voice", { required: false, max: MAX_FIELD_LENGTH });
+  const tone = readText("tone", { required: false, max: MAX_FIELD_LENGTH });
+  const dos = readText("dos", { required: false, max: MAX_FIELD_LENGTH });
+  const donts = readText("donts", { required: false, max: MAX_FIELD_LENGTH });
+  const terminology = readText("terminology", { required: false, max: MAX_FIELD_LENGTH });
 
-  for (const field of [brandName, targetAudience, primaryGoal, constraints, currentCopy]) {
+  for (const field of [brandName, targetAudience, primaryGoal, constraints, currentCopy, voice, tone, dos, donts, terminology]) {
     if (typeof field !== "string") return { ok: false, error: field.error };
   }
 
@@ -81,6 +91,11 @@ export function parseAnalyzeInput(body: unknown): ParseResult {
       brandName: brandName as string,
       targetAudience: targetAudience as string,
       narrativeStance: narrativeStance as NarrativeStance,
+      voice: voice as string,
+      tone: tone as string,
+      dos: dos as string,
+      donts: donts as string,
+      terminology: terminology as string,
       channel: channel as Channel,
       primaryGoal: primaryGoal as string,
       constraints: constraints as string,
