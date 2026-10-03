@@ -57,6 +57,15 @@ create table public.projects (
   donts text,            -- freeform list of things to avoid
   terminology text,      -- preferred terms / words to avoid
 
+  -- Project-scoped copy flow context
+  brand_name text,
+  target_audience text,
+  narrative_stance text,
+  channel text,
+  primary_goal text,
+  constraints text,
+  writer_id text,
+
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

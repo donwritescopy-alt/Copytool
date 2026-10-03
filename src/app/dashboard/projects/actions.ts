@@ -32,7 +32,51 @@ export async function createProject(_prevState: unknown, formData: FormData) {
   }
 
   revalidatePath("/dashboard");
-  redirect(`/dashboard/projects/${data.id}`);
+  redirect(`/dashboard/projects/${data.id}/flow/brand-guidelines`);
+}
+
+export async function updateProjectFlowStep(
+  _prevState: unknown,
+  formData: FormData,
+) {
+  const projectId = formData.get("projectId") as string;
+  const step = formData.get("step") as string;
+  const fieldsByStep: Record<string, string[]> = {
+    "brand-guidelines": [
+      "brand_name", "target_audience", "narrative_stance", "voice", "tone",
+      "dos", "donts", "terminology",
+    ],
+    "frame-context": ["channel", "primary_goal", "constraints"],
+    "choose-copywriter": ["writer_id"],
+  };
+  const fields = fieldsByStep[step];
+  if (!projectId || !fields) return { error: "Invalid project flow step." };
+
+  const values = Object.fromEntries(
+    fields.map((field) => [field, (formData.get(field) as string | null) ?? ""]),
+  );
+  if (step === "brand-guidelines") {
+    for (const field of ["brand_name", "target_audience", "narrative_stance"]) {
+      if (!String(values[field]).trim()) return { error: "Complete the required brand fields." };
+    }
+  }
+  if (step === "frame-context") {
+    if (!String(values.channel).trim() || !String(values.primary_goal).trim()) {
+      return { error: "Choose a channel and enter a primary goal." };
+    }
+  }
+  if (step === "choose-copywriter" && values.writer_id !== "val") {
+    return { error: "Choose a copy writer." };
+  }
+
+  const { error } = await (await createClient())
+    .from("projects")
+    .update(values)
+    .eq("id", projectId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/dashboard/projects/${projectId}`);
+  return { success: true };
 }
 
 export async function updateBrandGuidelines(
