@@ -18,39 +18,6 @@ export function BrandGuidelinesForm({ project }: { project: Project }) {
       <input type="hidden" name="projectId" value={project.id} />
 
       <div className="space-y-2">
-        <Label htmlFor="brand_name">Brand name</Label>
-        <Textarea
-          id="brand_name"
-          name="brand_name"
-          rows={1}
-          defaultValue={project.brand_name ?? ""}
-          placeholder="e.g. Acme"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="target_audience">Target audience</Label>
-        <Textarea
-          id="target_audience"
-          name="target_audience"
-          rows={2}
-          defaultValue={project.target_audience ?? ""}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="narrative_stance">Narrative stance</Label>
-        <select
-          id="narrative_stance"
-          name="narrative_stance"
-          defaultValue={project.narrative_stance ?? ""}
-          className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
-        >
-          <option value="">Choose a stance</option>
-          <option value="We">We</option>
-          <option value="I">I</option>
-          <option value="No person">No person</option>
-        </select>
-      </div>
-      <div className="space-y-2">
         <Label htmlFor="voice">Voice</Label>
         <Textarea
           id="voice"

@@ -8,13 +8,6 @@ export type Project = {
   dos: string | null;
   donts: string | null;
   terminology: string | null;
-  brand_name: string | null;
-  target_audience: string | null;
-  narrative_stance: string | null;
-  channel: string | null;
-  primary_goal: string | null;
-  constraints: string | null;
-  writer_id: string | null;
   created_at: string;
   updated_at: string;
 };
