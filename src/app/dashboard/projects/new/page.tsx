@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,6 +16,13 @@ import { createProject } from "../actions";
 
 export default function NewProjectPage() {
   const [state, formAction, pending] = useActionState(createProject, null);
+  const router = useRouter();
+  const createdId = state && "id" in state ? state.id : null;
+
+  // replace (not push) so Back from the details page lands on the dashboard
+  useEffect(() => {
+    if (createdId) router.replace(`/dashboard/projects/${createdId}/details?created=1`);
+  }, [createdId, router]);
 
   return (
     <Card className="mx-auto w-full max-w-lg">
@@ -31,11 +39,11 @@ export default function NewProjectPage() {
             <Label htmlFor="description">Description</Label>
             <Textarea id="description" name="description" rows={3} />
           </div>
-          {state?.error && (
+          {state && "error" in state && (
             <p className="text-sm text-destructive">{state.error}</p>
           )}
-          <Button type="submit" disabled={pending}>
-            {pending ? "Creating..." : "Create project"}
+          <Button type="submit" disabled={pending || !!createdId}>
+            {pending || createdId ? "Creating..." : "Create project"}
           </Button>
         </form>
       </CardContent>

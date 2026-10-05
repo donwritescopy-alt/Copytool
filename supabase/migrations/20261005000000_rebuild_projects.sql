@@ -1,7 +1,11 @@
--- ============================================================================
--- UX Copy Tool — database schema (source of truth)
--- Accounts live in Supabase Auth (auth.users). The app owns one table.
--- ============================================================================
+-- Run once in Supabase SQL Editor. Wipes all app data, keeps auth.users (accounts),
+-- then rebuilds the schema below. Replaces the earlier add_project_flow_fields/reset migrations.
+drop trigger if exists on_auth_user_created on auth.users;
+drop table if exists public.analysis_history, public.user_api_keys, public.personas,
+  public.projects, public.profiles cascade;
+drop function if exists public.handle_new_user();
+drop function if exists public.handle_updated_at();
+drop function if exists public.set_updated_at();
 
 create table public.projects (
   id uuid primary key default gen_random_uuid(),

@@ -31,8 +31,7 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle>No projects yet</CardTitle>
             <CardDescription>
-              Create your first project to set up brand guidelines and
-              personas.
+              Create your first project to set up its brand details.
             </CardDescription>
           </CardHeader>
         </Card>
