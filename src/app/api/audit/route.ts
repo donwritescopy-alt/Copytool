@@ -152,7 +152,10 @@ function normalizeResult(raw: unknown, input: AuditInput): AuditResult | null {
 export async function POST(request: Request) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return errorResponse("GEMINI_API_KEY is not set on the server.", 500);
+    console.error(
+      "GEMINI_API_KEY is missing. Add it to .env.local and restart npm run dev.",
+    );
+    return errorResponse("Something went wrong while auditing the copy.", 500);
   }
 
   let body: unknown;
