@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { postLoginPath } from "@/lib/figma-bridge";
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -40,7 +41,15 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && isAuthRoute) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    // Already signed in and arriving from the Figma plugin: go straight to
+    // the approval page instead of the dashboard.
+    const { searchParams } = request.nextUrl;
+    return NextResponse.redirect(
+      new URL(
+        postLoginPath(searchParams.get("source"), searchParams.get("state")),
+        request.url,
+      ),
+    );
   }
 
   return response;

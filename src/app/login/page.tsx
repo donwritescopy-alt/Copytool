@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { Suspense, useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,12 +12,79 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn, signInWithMagicLink, signUp } from "./actions";
+import {
+  signIn,
+  signInWithGoogle,
+  signUp,
+} from "./actions";
 
-type Mode = "login" | "signup" | "magic-link";
+type Mode = "login" | "signup";
 
+// useSearchParams needs a Suspense boundary in the App Router.
 export default function LoginPage() {
-  const [mode, setMode] = useState<Mode>("login");
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
+      <path
+        fill="currentColor"
+        d="M21.35 11.1H12v2.98h5.35c-.23 1.4-1.64 4.1-5.35 4.1a5.9 5.9 0 0 1 0-11.8c1.87 0 3.12.8 3.84 1.48l2.6-2.5A9.4 9.4 0 0 0 12 2.6a9.4 9.4 0 1 0 0 18.8c5.43 0 9.03-3.82 9.03-9.2 0-.62-.07-1.09-.15-1.56Z"
+      />
+    </svg>
+  );
+}
+
+/** Hidden fields that carry a Figma plugin login through every auth method. */
+function FigmaBridgeFields({
+  source,
+  state,
+}: {
+  source: string | null;
+  state: string | null;
+}) {
+  if (!source || !state) return null;
+  return (
+    <>
+      <input type="hidden" name="source" value={source} />
+      <input type="hidden" name="state" value={state} />
+    </>
+  );
+}
+
+function GoogleButton({
+  label,
+  source,
+  state,
+}: {
+  label: string;
+  source: string | null;
+  state: string | null;
+}) {
+  return (
+    <form action={signInWithGoogle}>
+      <FigmaBridgeFields source={source} state={state} />
+      <Button type="submit" variant="outline" className="w-full">
+        <GoogleIcon />
+        {label}
+      </Button>
+    </form>
+  );
+}
+
+function LoginContent() {
+  const [mode, setMode] = useState<Mode>("signup");
+
+  // Set when the login was opened from the Figma plugin.
+  const searchParams = useSearchParams();
+  const source = searchParams.get("source");
+  const state = searchParams.get("state");
+  const urlError = searchParams.get("error");
 
   const [signInState, signInAction, signInPending] = useActionState(
     signIn,
@@ -24,10 +92,6 @@ export default function LoginPage() {
   );
   const [signUpState, signUpAction, signUpPending] = useActionState(
     signUp,
-    null,
-  );
-  const [magicLinkState, magicLinkAction, magicLinkPending] = useActionState(
-    signInWithMagicLink,
     null,
   );
 
@@ -38,17 +102,26 @@ export default function LoginPage() {
           <CardTitle>
             {mode === "login" && "Log in"}
             {mode === "signup" && "Create an account"}
-            {mode === "magic-link" && "Log in with a magic link"}
           </CardTitle>
           <CardDescription>
-            {mode === "magic-link"
-              ? "We'll email you a link to log in without a password."
-              : "Access your UX Copy Tool projects."}
+            Access your UX Copy Tool projects.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {source === "figma" && state && (
+            <p className="rounded-lg bg-muted p-3 text-sm text-muted-foreground">
+              Log in to connect the Figma plugin. You&apos;ll be asked to
+              approve it next.
+            </p>
+          )}
+          {urlError && (
+            <p className="text-sm text-destructive">
+              Sign-in didn&apos;t complete. Please try again.
+            </p>
+          )}
           {mode === "login" && (
             <form action={signInAction} className="space-y-4">
+              <FigmaBridgeFields source={source} state={state} />
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" name="email" type="email" required />
@@ -73,8 +146,37 @@ export default function LoginPage() {
             </form>
           )}
 
+          {mode === "login" && (
+            <GoogleButton
+              label="Sign in with Google"
+              source={source}
+              state={state}
+            />
+          )}
+
           {mode === "signup" && (
             <form action={signUpAction} className="space-y-4">
+              <FigmaBridgeFields source={source} state={state} />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-first-name">First name</Label>
+                  <Input
+                    id="signup-first-name"
+                    name="firstName"
+                    autoComplete="given-name"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-last-name">Last name</Label>
+                  <Input
+                    id="signup-last-name"
+                    name="lastName"
+                    autoComplete="family-name"
+                    required
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="signup-email">Email</Label>
                 <Input id="signup-email" name="email" type="email" required />
@@ -105,61 +207,32 @@ export default function LoginPage() {
             </form>
           )}
 
-          {mode === "magic-link" && (
-            <form action={magicLinkAction} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="magic-email">Email</Label>
-                <Input id="magic-email" name="email" type="email" required />
-              </div>
-              {magicLinkState?.error && (
-                <p className="text-sm text-destructive">
-                  {magicLinkState.error}
-                </p>
-              )}
-              {magicLinkState?.message && (
-                <p className="text-sm text-muted-foreground">
-                  {magicLinkState.message}
-                </p>
-              )}
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={magicLinkPending}
-              >
-                {magicLinkPending ? "Sending..." : "Send magic link"}
-              </Button>
-            </form>
+          {mode === "signup" && (
+            <GoogleButton
+              label="Sign up with Google"
+              source={source}
+              state={state}
+            />
           )}
 
-          <div className="flex flex-col gap-1 text-center text-sm text-muted-foreground">
-            {mode !== "login" && (
-              <button
-                type="button"
-                className="underline underline-offset-4"
-                onClick={() => setMode("login")}
-              >
-                Log in with a password
-              </button>
-            )}
-            {mode !== "signup" && (
-              <button
-                type="button"
-                className="underline underline-offset-4"
-                onClick={() => setMode("signup")}
-              >
-                Create an account
-              </button>
-            )}
-            {mode !== "magic-link" && (
-              <button
-                type="button"
-                className="underline underline-offset-4"
-                onClick={() => setMode("magic-link")}
-              >
-                Log in with a magic link instead
-              </button>
-            )}
-          </div>
+          {mode === "signup" ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setMode("login")}
+            >
+              Sign in with password
+            </Button>
+          ) : (
+            <button
+              type="button"
+              className="block w-full text-center text-sm text-muted-foreground underline underline-offset-4"
+              onClick={() => setMode("signup")}
+            >
+              Create an account
+            </button>
+          )}
         </CardContent>
       </Card>
     </div>

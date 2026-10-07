@@ -11,14 +11,9 @@ export default function Home() {
         Set your brand voice, tone, and personas once. Our Figma plugin uses
         them to suggest copy that actually sounds like you.
       </p>
-      <div className="flex gap-4">
-        <Button render={<Link href="/login" />} size="lg">
-          Get started
-        </Button>
-        <Button render={<Link href="/login" />} variant="outline" size="lg">
-          Log in
-        </Button>
-      </div>
+      <Button render={<Link href="/login" />} size="lg">
+        Get started
+      </Button>
     </div>
   );
 }
