@@ -1,12 +1,22 @@
-/** Voice profiles for the writer personas available in the Figma plugin. */
+import {
+  BEX_PROMPT,
+  DOT_PROMPT,
+  LEO_PROMPT,
+  MARCUS_PROMPT,
+  SAM_PROMPT,
+  VAL_PROMPT,
+  ZARA_PROMPT,
+} from "./prompts/writers";
+
+/** Full writer prompts available in the Figma plugin. */
 export const WRITER_PERSONAS = {
-  Zara: "Cheeky. Quick. Always has a comeback.",
-  Dot: "Deadpan. Minimal. Funny without trying.",
-  Sam: "Warm. Unhurried. Makes you feel seen.",
-  Marcus: "Serious. Precise. Allergic to vagueness.",
-  Bex: "Genuinely excited. Not performative — actually delighted.",
-  Leo: "Cool. Effortless. Has taste the way some people just have it.",
-  Val: "Dry warmth. Notices things. Trainer instincts.",
+  Zara: ZARA_PROMPT,
+  Dot: DOT_PROMPT,
+  Sam: SAM_PROMPT,
+  Marcus: MARCUS_PROMPT,
+  Bex: BEX_PROMPT,
+  Leo: LEO_PROMPT,
+  Val: VAL_PROMPT,
 } as const;
 
 export type WriterName = keyof typeof WRITER_PERSONAS;

@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prompts:build": "node scripts/build-audit-prompts.cjs",
+    "predev": "npm run prompts:build",
+    "prebuild": "npm run prompts:build",
+    "prompts:check": "node scripts/check-audit-prompts.cjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
