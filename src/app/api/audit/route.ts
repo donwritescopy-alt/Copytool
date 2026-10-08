@@ -10,15 +10,30 @@ import {
 } from "@/lib/audit/prompt";
 import type { Project } from "@/lib/types";
 
-// Free-tier Gemini Flash models, tried in order. The newest are often
-// overloaded (503), so the route falls back to the next one.
-// Set GEMINI_MODEL in .env.local to put a specific model first.
+// The local probe found 3.5 fastest, then 3.6. Set GEMINI_MODEL to put a
+// specific model first.
 const MODELS = [
-  process.env.GEMINI_MODEL,
-  "gemini-3.8-flash",
-  "gemini-3.6-flash",
-  "gemini-3.5-flash",
-].filter((m): m is string => !!m);
+  ...new Set(
+    [
+      process.env.GEMINI_MODEL,
+      "gemini-3.5-flash",
+      "gemini-3.6-flash",
+      "gemini-3.8-flash",
+    ].filter((m): m is string => !!m),
+  ),
+];
+const MODEL_TIMEOUT_MS = positiveInteger(process.env.AUDIT_MODEL_TIMEOUT_MS, 30_000);
+const GEMINI_DEADLINE_MS = 90_000;
+
+function positiveInteger(value: string | undefined, fallback: number) {
+  if (!value) return fallback;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+// Leaves room for authentication, project lookup, and response delivery
+// around the bounded 90-second Gemini phase on platforms that support it.
+export const maxDuration = 120;
 
 // The plugin UI runs in a sandboxed iframe with an opaque ("null") origin,
 // so it needs CORS. Auth is a bearer token, not cookies.
@@ -34,6 +49,19 @@ function json(body: unknown, status = 200) {
 
 function errorResponse(error: string, status: number) {
   return json({ error }, status);
+}
+
+function geminiTimeoutResponse() {
+  return errorResponse("The AI took too long to answer. Please try again.", 504);
+}
+
+function logModelAttempt(model: string, result: string, startedAt: number) {
+  console.info(
+    `[api/audit] model=${model} result=${result} seconds=${(
+      (Date.now() - startedAt) /
+      1000
+    ).toFixed(2)}`,
+  );
 }
 
 export function OPTIONS() {
@@ -207,19 +235,72 @@ export async function POST(request: Request) {
     };
 
     let text: string | undefined;
+    let timedOutAttempts = 0;
+    let rateLimitedAttempts = 0;
+    let lastRetryableError: unknown;
+    let lastServerError: unknown;
+    const phaseStartedAt = Date.now();
     for (const [index, model] of MODELS.entries()) {
+      const remainingMs = GEMINI_DEADLINE_MS - (Date.now() - phaseStartedAt);
+      if (remainingMs <= 0) return geminiTimeoutResponse();
+
+      const attemptTimeoutMs = Math.min(MODEL_TIMEOUT_MS, remainingMs);
+      const controller = new AbortController();
+      const attemptStartedAt = Date.now();
+      let timedOut = false;
+      const timeout = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, attemptTimeoutMs);
+
       try {
         const response = await ai.models.generateContent({
           model,
           contents,
-          config,
+          config: { ...config, abortSignal: controller.signal },
         });
+        clearTimeout(timeout);
+        logModelAttempt(model, "ok", attemptStartedAt);
         text = response.text?.trim();
         break;
       } catch (err) {
-        // Only an overloaded model is worth retrying on the next one.
-        const overloaded = err instanceof ApiError && err.status === 503;
-        if (!overloaded || index === MODELS.length - 1) throw err;
+        clearTimeout(timeout);
+        const status = err instanceof ApiError ? err.status : undefined;
+        const result = timedOut
+          ? "timeout"
+          : status === 429 || status === 503
+            ? String(status)
+            : "other";
+        logModelAttempt(model, result, attemptStartedAt);
+
+        if (timedOut) {
+          timedOutAttempts += 1;
+          lastRetryableError = err;
+        } else if (status === 429 || status === 500 || status === 503) {
+          if (status === 429) rateLimitedAttempts += 1;
+          if (status === 500 || status === 503) lastServerError = err;
+          lastRetryableError = err;
+        } else {
+          throw err;
+        }
+
+        if (index === MODELS.length - 1) {
+          if (rateLimitedAttempts === MODELS.length) {
+            return errorResponse(
+              "Gemini rate limit reached (free tier). Wait a minute and try again.",
+              429,
+            );
+          }
+          if (timedOutAttempts === MODELS.length) return geminiTimeoutResponse();
+          if (lastServerError) throw lastServerError;
+          if (rateLimitedAttempts > 0) {
+            return errorResponse(
+              "Gemini is temporarily unavailable. Try again shortly.",
+              503,
+            );
+          }
+          throw lastRetryableError;
+        }
       }
     }
 
