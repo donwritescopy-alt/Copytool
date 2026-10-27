@@ -1,0 +1,53 @@
+/* Layer 2: semantic. The only colour, radius and type values components may use. */
+:root {
+  --surface-canvas: var(--neutral-100);
+  --surface-glass: rgb(255 255 255 / 0.62);
+  --surface-solid: var(--neutral-0);
+  --surface-inverse: var(--neutral-900);
+  --surface-inverse-raised: var(--neutral-800);
+  --surface-inverse-raised-hover: var(--neutral-700);
+  --surface-muted: var(--neutral-200);
+
+  --text-primary: var(--neutral-950);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary: var(--neutral-500);
+  --text-on-accent: var(--neutral-950);
+  --text-inverse: var(--neutral-0);
+  --text-inverse-secondary: var(--neutral-500);
+
+  --border-subtle: var(--neutral-200);
+  --border-glass: rgb(255 255 255 / 0.85);
+
+  --accent: var(--lime-400);
+  --accent-hover: var(--lime-500);
+  --accent-pressed: var(--lime-600);
+  --accent-soft: var(--lime-100);
+
+  --danger: var(--red-500);
+  --danger-text: var(--red-600);
+  --success: var(--green-400);
+  --focus-ring: var(--neutral-950);
+  --focus-ring-inverse: var(--lime-400);
+
+  --radius-tight: var(--radius-8);
+  --radius-inner: var(--radius-12);
+  --radius-field: var(--radius-12);
+  --radius-panel: var(--radius-16);
+  --radius-card: var(--radius-24);
+  --radius-pill: var(--radius-999);
+
+  --type-caption: var(--font-size-12);
+  --type-label: var(--font-size-13);
+  --type-body-sm: var(--font-size-14);
+  --type-body: var(--font-size-16);
+  --type-title-sm: var(--font-size-20);
+  --type-title: var(--font-size-24);
+  --type-display: var(--font-size-32);
+
+  --weight-regular: var(--font-weight-400);
+  --weight-medium: var(--font-weight-500);
+  --weight-semibold: var(--font-weight-600);
+
+  /* Component token: input fill differs from every surface. */
+  --input-bg: var(--neutral-50);
+}

@@ -69,7 +69,7 @@ function GoogleButton({
   return (
     <form action={signInWithGoogle}>
       <FigmaBridgeFields source={source} state={state} />
-      <Button type="submit" variant="outline" className="w-full">
+      <Button type="submit" variant="secondary" className="w-full">
         <GoogleIcon />
         {label}
       </Button>
@@ -109,14 +109,14 @@ function LoginContent() {
         </CardHeader>
         <CardContent className="space-y-4">
           {source === "figma" && state && (
-            <p className="rounded-lg bg-muted p-3 text-sm text-muted-foreground">
+            <p className="rounded-field bg-muted p-3 text-sm text-muted-foreground">
               Log in to connect the Figma plugin. You&apos;ll be asked to
               approve it next.
             </p>
           )}
           {urlError && (
             <p className="text-sm text-destructive">
-              Sign-in didn&apos;t complete. Please try again.
+              Log-in didn&apos;t complete. Please try again.
             </p>
           )}
           {mode === "login" && (
@@ -148,7 +148,7 @@ function LoginContent() {
 
           {mode === "login" && (
             <GoogleButton
-              label="Sign in with Google"
+              label="Log in with Google"
               source={source}
               state={state}
             />
@@ -216,14 +216,19 @@ function LoginContent() {
           )}
 
           {mode === "signup" ? (
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => setMode("login")}
-            >
-              Sign in with password
-            </Button>
+            <div className="space-y-2 pt-2">
+              <p className="text-center text-label text-secondary">
+                Already have an account?
+              </p>
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                onClick={() => setMode("login")}
+              >
+                Log in
+              </Button>
+            </div>
           ) : (
             <button
               type="button"

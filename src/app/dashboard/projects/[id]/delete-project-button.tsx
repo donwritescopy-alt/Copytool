@@ -14,7 +14,7 @@ export function DeleteProjectButton({ projectId }: { projectId: string }) {
       }}
     >
       <input type="hidden" name="projectId" value={projectId} />
-      <Button type="submit" variant="destructive">
+      <Button type="submit" variant="secondary">
         Delete project
       </Button>
     </form>

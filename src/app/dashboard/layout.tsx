@@ -24,7 +24,7 @@ export default function DashboardLayout({
         <div className="flex items-center gap-4">
           <Suspense fallback={<span className="h-4 w-32 animate-pulse rounded bg-muted" />}><UserEmail /></Suspense>
           <form action={signOut}>
-            <Button type="submit" variant="outline" size="sm">
+            <Button type="submit" variant="secondary" size="sm">
               Log out
             </Button>
           </form>

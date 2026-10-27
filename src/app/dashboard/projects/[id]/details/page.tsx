@@ -22,7 +22,7 @@ export default async function ProjectDetailsPage(
       {created && (
         <p
           role="status"
-          className="rounded-lg border bg-muted px-4 py-3 text-sm"
+          className="rounded-field border bg-muted px-4 py-3 text-sm"
         >
           Project “{project.name}” created. Add some brand details next.
         </p>

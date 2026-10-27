@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, inputClasses } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Project } from "@/lib/types";
@@ -93,7 +93,7 @@ export function ProjectForm({
           id="narrative_stance"
           name="narrative_stance"
           defaultValue={project.narrative_stance ?? ""}
-          className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          className={inputClasses}
         >
           <option value="">Select…</option>
           <option value="we">We</option>
@@ -116,7 +116,7 @@ export function ProjectForm({
         </Button>
         {showFigmaButton && (
           // ponytail: inert until the Figma frames step exists; wire onClick/link then.
-          <Button type="button" variant="outline" disabled={!project.details_saved_at}>
+          <Button type="button" variant="secondary" disabled={!project.details_saved_at}>
             Select Figma Frames
           </Button>
         )}

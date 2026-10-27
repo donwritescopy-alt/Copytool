@@ -1,0 +1,43 @@
+/* Layer 3: effects. Blur, shadows, gradients and motion. */
+:root {
+  --glass-blur: 24px;
+  --glass-saturate: 140%;
+
+  --shadow-card: 0 24px 48px -16px rgb(0 0 0 / 0.14), 0 8px 16px -8px rgb(0 0 0 / 0.06);
+  --shadow-raised: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.1);
+  --shadow-glow-accent: inset 0 0 0 1.5px rgb(255 255 255 / 0.7), 0 8px 28px -4px color-mix(in srgb, var(--lime-400) 75%, transparent);
+
+  --gradient-canvas:
+    radial-gradient(55% 45% at 12% 8%, color-mix(in srgb, var(--lime-300) 22%, transparent), transparent 70%),
+    radial-gradient(50% 50% at 92% 88%, color-mix(in srgb, var(--sage-100) 90%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--neutral-100), var(--neutral-200));
+  --gradient-card: linear-gradient(135deg, var(--neutral-0) 0%, var(--sage-100) 55%, var(--sand-100) 100%);
+  --gradient-card-tint-lime:
+    radial-gradient(70% 55% at 0% 100%, color-mix(in srgb, var(--lime-200) 45%, transparent), transparent 70%),
+    var(--gradient-card);
+  --gradient-accent-glow: radial-gradient(75% 95% at 50% 45%, var(--lime-200) 0%, var(--lime-400) 55%, var(--lime-500) 100%);
+
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --surface-glass: rgb(255 255 255 / 0.94);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --surface-glass: var(--neutral-0);
+    --glass-blur: 0px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+  }
+}
