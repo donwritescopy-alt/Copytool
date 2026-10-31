@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plugin DS Preview</title>
+<link rel="stylesheet" href="plugin-ds.css">
+<style>
+  html { height: 100%; }
+  body {
+    margin: 0;
+    height: 100%;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .preview-wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; color: #0a0a0a; }
+  h2 { font-size: 14px; font-weight: 600; margin: 32px 0 12px; color: #0a0a0a; border-bottom: 1px solid #e6e6e6; padding-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #6b6b6b; margin: 0 0 24px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .stack { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .label-above { font-size: 11px; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .spacer { height: 16px; }
+</style>
+</head>
+<body>
+<div class="ds-root ds-canvas ds-compact">
+<div class="preview-wrap">
+
+  <h1>Plugin Design System</h1>
+  <p class="subtitle">Every component at compact density (~380px panel)</p>
+
+  <!-- ── Buttons ── -->
+  <h2>Buttons</h2>
+
+  <div class="label-above">Primary (sm / md / lg)</div>
+  <div class="row">
+    <button class="ds-btn ds-btn--primary ds-btn--sm">Small</button>
+    <button class="ds-btn ds-btn--primary ds-btn--md">Medium</button>
+    <button class="ds-btn ds-btn--primary ds-btn--lg">Large</button>
+  </div>
+
+  <div class="label-above">Secondary</div>
+  <div class="row">
+    <button class="ds-btn ds-btn--secondary ds-btn--sm">Secondary</button>
+    <button class="ds-btn ds-btn--secondary">Secondary</button>
+  </div>
+
+  <div class="label-above">Ghost</div>
+  <div class="row">
+    <button class="ds-btn ds-btn--ghost ds-btn--sm">Ghost</button>
+    <button class="ds-btn ds-btn--ghost">Ghost</button>
+  </div>
+
+  <div class="label-above">Inverse</div>
+  <div class="row">
+    <button class="ds-btn ds-btn--inverse ds-btn--sm">Inverse</button>
+    <button class="ds-btn ds-btn--inverse">Inverse</button>
+  </div>
+
+  <div class="label-above">Glow (one per screen!)</div>
+  <div class="row">
+    <button class="ds-btn ds-btn--glow">Run Audit</button>
+  </div>
+
+  <div class="label-above">Disabled</div>
+  <div class="row">
+    <button class="ds-btn ds-btn--primary" disabled>Disabled</button>
+    <button class="ds-btn ds-btn--secondary" disabled>Disabled</button>
+  </div>
+
+  <!-- ── Icon Buttons ── -->
+  <h2>Icon Buttons</h2>
+  <div class="row">
+    <button class="ds-iconbtn ds-iconbtn--sm" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <button class="ds-iconbtn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+    <button class="ds-iconbtn ds-iconbtn--ghost" aria-label="More">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    </button>
+    <button class="ds-iconbtn ds-iconbtn--primary" aria-label="Add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </div>
+
+  <!-- ── Chips (Badge) ── -->
+  <h2>Chips</h2>
+  <div class="row">
+    <span class="ds-chip ds-chip--accent">Pro</span>
+    <span class="ds-chip ds-chip--neutral">Draft</span>
+    <span class="ds-chip ds-chip--status">Connected</span>
+  </div>
+
+  <!-- ── Cards ── -->
+  <h2>Cards</h2>
+
+  <div class="stack">
+    <div class="ds-card ds-card--glass">
+      <strong>Glass card</strong>
+      <span style="color:var(--text-secondary);">Default over the gradient canvas.</span>
+    </div>
+
+    <div class="ds-card ds-card--gradient">
+      <strong>Gradient card</strong>
+      <span style="color:var(--text-secondary);">Hero / feature card.</span>
+    </div>
+
+    <div class="ds-card ds-card--solid">
+      <strong>Solid card</strong>
+      <span style="color:var(--text-secondary);">Dense content, no canvas behind.</span>
+    </div>
+
+    <div class="ds-card ds-card--inverse">
+      <strong>Inverse card</strong>
+      <span style="color:var(--text-inverse-secondary);">Dark surface for profile/status.</span>
+      <button class="ds-btn ds-btn--inverse ds-btn--sm">Action</button>
+    </div>
+  </div>
+
+  <!-- ── Inputs ── -->
+  <h2>Inputs</h2>
+  <div class="stack">
+    <div>
+      <label class="ds-label" for="demo-input">Brand name</label>
+      <div class="spacer"></div>
+      <input class="ds-input" id="demo-input" placeholder="e.g. Acme Corp">
+    </div>
+    <div>
+      <label class="ds-label" for="demo-input-err">With error</label>
+      <div class="spacer"></div>
+      <input class="ds-input" id="demo-input-err" aria-invalid="true" value="Bad value">
+      <div style="margin-top:6px;">
+        <span class="ds-message ds-message--error">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          <span>Brand name is required.</span>
+        </span>
+      </div>
+    </div>
+    <div>
+      <label class="ds-label" for="demo-input-dis">Disabled</label>
+      <div class="spacer"></div>
+      <input class="ds-input" id="demo-input-dis" disabled value="Locked">
+    </div>
+  </div>
+
+  <!-- ── Textarea ── -->
+  <h2>Textarea</h2>
+  <div class="stack">
+    <label class="ds-label" for="demo-ta">Target audience</label>
+    <textarea class="ds-textarea" id="demo-ta" placeholder="Describe who reads this copy…"></textarea>
+  </div>
+
+  <!-- ── Select ── -->
+  <h2>Select</h2>
+  <div class="stack">
+    <label class="ds-label" for="demo-select">Writer persona</label>
+    <select class="ds-select" id="demo-select">
+      <option value="" disabled selected>Choose a persona…</option>
+      <option>Brand voice</option>
+      <option>Friendly expert</option>
+      <option>Formal</option>
+    </select>
+  </div>
+
+  <!-- ── Segmented Control ── -->
+  <h2>Segmented Control</h2>
+  <div class="ds-segmented" role="radiogroup" aria-label="Narrative stance">
+    <button class="ds-segmented__item is-active" role="radio" aria-checked="true">We</button>
+    <button class="ds-segmented__item" role="radio" aria-checked="false">I</button>
+    <button class="ds-segmented__item" role="radio" aria-checked="false">No person</button>
+  </div>
+
+  <!-- ── List Row ── -->
+  <h2>List Row</h2>
+  <div class="ds-card ds-card--solid" style="gap:0;">
+    <div class="ds-row" style="padding:12px 0;">
+      <div class="ds-row__body">
+        <span class="ds-row__title">Homepage hero</span>
+        <span class="ds-row__desc">Frame #12 · 3 text layers</span>
+      </div>
+      <div class="ds-row__trail"><span class="ds-chip ds-chip--accent">Ready</span></div>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--border-subtle);margin:0;">
+    <div class="ds-row" style="padding:12px 0;">
+      <div class="ds-row__body">
+        <span class="ds-row__title">Pricing section</span>
+        <span class="ds-row__desc">Frame #15 · 8 text layers</span>
+      </div>
+      <div class="ds-row__trail"><span class="ds-chip ds-chip--neutral">Draft</span></div>
+    </div>
+  </div>
+
+  <!-- ── Stat Row ── -->
+  <h2>Stat Row</h2>
+  <div class="ds-card ds-card--solid">
+    <dl style="margin:0; display:flex; flex-direction:column; gap:8px;">
+      <div class="ds-statrow ds-statrow--lg"><dt>Findings</dt><dd>12</dd></div>
+      <div class="ds-statrow"><dt>Applied</dt><dd>8</dd></div>
+      <div class="ds-statrow"><dt>Dismissed</dt><dd>4</dd></div>
+    </dl>
+  </div>
+
+  <!-- ── Status Strip ── -->
+  <h2>Status Strip</h2>
+  <div class="ds-status-strip">
+    <div class="ds-status-strip__card">
+      <div class="ds-card ds-card--inverse">
+        <strong>UX Copy Tool</strong>
+        <span style="color:var(--text-inverse-secondary);">Connected to Figma</span>
+      </div>
+    </div>
+    <div class="ds-status-strip__bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+      Plugin connected
+    </div>
+  </div>
+
+  <!-- ── Messages ── -->
+  <h2>Inline Messages</h2>
+  <div class="stack">
+    <span class="ds-message ds-message--error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <span>Something went wrong. Try again.</span>
+    </span>
+    <span class="ds-message ds-message--info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
+      <span>Select text layers in Figma first.</span>
+    </span>
+    <span class="ds-message ds-message--success">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      <span>All suggestions applied.</span>
+    </span>
+  </div>
+
+</div>
+</div>
+</body>
+</html>

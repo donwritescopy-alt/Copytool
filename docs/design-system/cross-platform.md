@@ -48,6 +48,28 @@ Same rules as the web: semantic and effect tokens only, lime is the only accent,
 
 The web uses Geist through `next/font`. In the plugin, bundle Geist locally or fall back to `system-ui`. Avoid loading from a font CDN.
 
+## Plugin handoff bundle
+
+`plugin-handoff/` contains everything the Figma plugin needs: `plugin-ds.css` (tokens + base + components), `preview.html`, `PLUGIN_HANDOFF.md` (class cheat sheet + screen specs), and inspiration images.
+
+### Update routine
+
+When the design changes in the web app:
+
+1. Make the change in the web codebase (tokens, components, etc.).
+2. Run `npm run plugin:handoff` — this regenerates `plugin-handoff/plugin-ds.css` and copies inspiration images.
+3. Copy `plugin-handoff/plugin-ds.css` into the plugin project (replace the existing file).
+4. Rebuild the plugin.
+
+The script resolves all `var()` references so the plugin CSS has no dependency chain. If a token is renamed or removed, the script will fail with an error naming the broken reference.
+
+### What each script does
+
+| Script | Output | Purpose |
+| --- | --- | --- |
+| `npm run tokens:export` | `build/plugin-tokens.css` | Tokens only (no components). Use if you need raw values elsewhere. |
+| `npm run plugin:handoff` | `plugin-handoff/plugin-ds.css` + images | Full bundle: tokens + base + component classes + fallbacks. This is what the plugin ships. |
+
 ## Keeping parity
 
 Track each component's plugin status in [COMPONENT_STATUS.md](COMPONENT_STATUS.md). When a component is built in the plugin, mirror the variants and states in its `components/<name>.md` and update the "Plugin parity" section.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 · 2026-10-28
+
+Plugin handoff bundle.
+
+- New: `plugin-handoff/` folder with `plugin-ds.css`, `preview.html`, `PLUGIN_HANDOFF.md`, and `inspiration/`.
+- `plugin-ds.css` is a single self-contained file: all tokens resolved to plain values, base styles scoped under `.ds-root`, component classes (`.ds-btn`, `.ds-iconbtn`, `.ds-chip`, `.ds-card`, `.ds-input`, `.ds-textarea`, `.ds-label`, `.ds-select`, `.ds-segmented`, `.ds-row`, `.ds-statrow`, `.ds-status-strip`, `.ds-message`), compact density (`.ds-compact`), and accessibility fallbacks.
+- New script: `npm run plugin:handoff` (`scripts/build-plugin-handoff.mjs`).
+- Plugin impact: 14 components marked "handoff ready" in COMPONENT_STATUS.md.
+- Updated `cross-platform.md` with the full update routine.
+
 ## 0.3.0 · 2026-10-27
 
 - Less rounding: cards 32→24px, panels 24→16px, inner 16→12px, tight 12→8px. Added `--radius-8` and `--radius-field` (12px).

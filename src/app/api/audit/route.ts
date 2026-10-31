@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ApiError, GoogleGenAI } from "@google/genai";
+import { isKeyRejected, MODELS } from "@/lib/audit/gemini";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createClient as createCookieClient } from "@/lib/supabase/server";
 import { parseAuditInput, type AuditInput } from "@/lib/audit/input";
@@ -10,18 +11,6 @@ import {
 } from "@/lib/audit/prompt";
 import type { Project } from "@/lib/types";
 
-// The local probe found 3.5 fastest, then 3.6. Set GEMINI_MODEL to put a
-// specific model first.
-const MODELS = [
-  ...new Set(
-    [
-      process.env.GEMINI_MODEL,
-      "gemini-3.5-flash",
-      "gemini-3.6-flash",
-      "gemini-3.8-flash",
-    ].filter((m): m is string => !!m),
-  ),
-];
 const MODEL_TIMEOUT_MS = positiveInteger(process.env.AUDIT_MODEL_TIMEOUT_MS, 30_000);
 const GEMINI_DEADLINE_MS = 90_000;
 
@@ -47,8 +36,8 @@ function json(body: unknown, status = 200) {
   return NextResponse.json(body, { status, headers: CORS_HEADERS });
 }
 
-function errorResponse(error: string, status: number) {
-  return json({ error }, status);
+function errorResponse(error: string, status: number, code?: string) {
+  return json(code ? { error, code } : { error }, status);
 }
 
 function geminiTimeoutResponse() {
@@ -99,14 +88,12 @@ async function getSupabaseForRequest(request: Request) {
 /** Translates a Gemini SDK failure into a clean, user-safe response. */
 function handleGeminiError(err: unknown) {
   if (err instanceof ApiError) {
-    const message = err.message.toLowerCase();
-    if (
-      err.status === 401 ||
-      err.status === 403 ||
-      message.includes("api key not valid") ||
-      message.includes("api_key_invalid")
-    ) {
-      return errorResponse("The Gemini API key is invalid or not allowed.", 502);
+    if (isKeyRejected(err)) {
+      return errorResponse(
+        "Gemini rejected your API key. Check your key in Settings.",
+        502,
+        "gemini_key_invalid",
+      );
     }
     if (err.status === 429) {
       return errorResponse(
@@ -178,14 +165,6 @@ function normalizeResult(raw: unknown, input: AuditInput): AuditResult | null {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error(
-      "GEMINI_API_KEY is missing. Add it to .env.local and restart npm run dev.",
-    );
-    return errorResponse("Something went wrong while auditing the copy.", 500);
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -200,6 +179,22 @@ export async function POST(request: Request) {
   const supabase = await getSupabaseForRequest(request);
   if (!supabase) {
     return errorResponse("You need to be logged in to run an audit.", 401);
+  }
+
+  // The caller's own key, via their own session (auth.uid() applies).
+  const { data: apiKey, error: keyError } = await supabase.rpc(
+    "get_user_gemini_key",
+  );
+  if (keyError) {
+    console.error("Gemini key lookup failed:", keyError.message);
+    return errorResponse("Something went wrong while auditing the copy.", 500);
+  }
+  if (!apiKey) {
+    return errorResponse(
+      "Add your Gemini API key in Settings to run audits.",
+      403,
+      "gemini_key_missing",
+    );
   }
 
   // Row-level security limits this to the caller's own projects.

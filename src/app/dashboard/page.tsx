@@ -17,8 +17,26 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false })
     .returns<Project[]>();
 
+  const { data: keyRow } = await supabase
+    .from("user_gemini_keys")
+    .select("key_last4")
+    .maybeSingle();
+
   return (
     <div className="flex flex-col gap-6">
+      {!keyRow && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Add your Gemini API key</CardTitle>
+            <CardDescription>
+              You need a key to run audits.{" "}
+              <Link href="/dashboard/settings" className="underline">
+                Go to Settings
+              </Link>
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Projects</h1>
         <Button render={<Link href="/dashboard/projects/new" />}>

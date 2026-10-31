@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useActionState, useState } from "react";
+import { Suspense, useActionState, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -77,6 +77,26 @@ function GoogleButton({
   );
 }
 
+/**
+ * The Figma plugin's "Continue with Google" opens /login?provider=google.
+ * Submit the Google form straight away so the user never has to click twice;
+ * source/state ride along and come back via the callback to /auth/figma-success.
+ */
+function AutoGoogle({ source, state }: { source: string; state: string }) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const started = useRef(false);
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    formRef.current?.requestSubmit();
+  }, []);
+  return (
+    <form ref={formRef} action={signInWithGoogle} hidden>
+      <FigmaBridgeFields source={source} state={state} />
+    </form>
+  );
+}
+
 function LoginContent() {
   const [mode, setMode] = useState<Mode>("signup");
 
@@ -85,6 +105,8 @@ function LoginContent() {
   const source = searchParams.get("source");
   const state = searchParams.get("state");
   const urlError = searchParams.get("error");
+  const autoGoogle =
+    searchParams.get("provider") === "google" && source === "figma" && !!state && !urlError;
 
   const [signInState, signInAction, signInPending] = useActionState(
     signIn,
@@ -113,6 +135,10 @@ function LoginContent() {
               Log in to connect the Figma plugin. You&apos;ll be asked to
               approve it next.
             </p>
+          )}
+          {autoGoogle && <AutoGoogle source={source!} state={state!} />}
+          {autoGoogle && (
+            <p className="text-sm text-muted-foreground">Taking you to Google…</p>
           )}
           {urlError && (
             <p className="text-sm text-destructive">
